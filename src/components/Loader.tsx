@@ -1,4 +1,3 @@
-import React from "react";
 import { Loader } from "lucide-react"; // Import the Loader icon from Lucide
 
 const CustomSpinner = () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import useItemStore from "@/store/itemStore";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
