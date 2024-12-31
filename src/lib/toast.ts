@@ -1,11 +1,10 @@
 import { toast } from "sonner";
 
-export const showToast = (message: string) => {
+export const showToast = (message: string, type: "success" | "error") => {
   toast(message, {
     style: {
-      backgroundColor: "#1e1e1e",
-      color: "#fff",
-      borderRadius: "0.5rem",
+      backgroundColor: type === "error" ? "#e74c3c" : "#1e1e1e",
+      color: type === "error" ? "#000" : "#fff",
     },
   });
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import useItemStore from "@/store/itemStore";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
@@ -30,9 +30,6 @@ const ItemManagement = () => {
     [key: string]: boolean;
   }>({});
 
-  // Ref for the name input
-  const nameInputRef = useRef<HTMLInputElement>(null);
-
   // Fetch items from the backend
   const fetchItems = useCallback(async () => {
     setLoadingItems(true);
@@ -55,7 +52,7 @@ const ItemManagement = () => {
     try {
       const data = (await addItemAPI(name, description)) as fetchProps;
       addItem({ _id: data._id, name, description });
-      showToast("Item added successfully!"); // Show success toast
+      showToast("Item added successfully!", "success"); // Show success toast
       setName("");
       setDescription("");
       setErrorMessage("");
@@ -74,7 +71,7 @@ const ItemManagement = () => {
     try {
       await deleteItemAPI(id);
       deleteItem(id);
-      showToast("Item deleted successfully!"); // Show success toast
+      showToast("Item deleted successfully!", "success"); // Show success toast
     } catch (error) {
       console.error("Error deleting item:", error);
       setErrorMessage("Failed to delete item.");
@@ -122,7 +119,6 @@ const ItemManagement = () => {
             onChange={(e) => setName(e.target.value)}
             placeholder="Name"
             required
-            ref={nameInputRef}
             className="flex-grow border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <Input
@@ -159,14 +155,19 @@ const ItemManagement = () => {
                 {items.map((item) => (
                   <Card
                     key={item._id}
-                    className="flex justify-between items-center mb-4 p-4 bg-gray-100 rounded-lg shadow"
+                    className="flex flex-col justify-between mb-4 p-4 bg-gray-100 rounded-lg shadow"
                   >
-                    <span className="font-medium">
-                      {item.name} - {item.description}
-                    </span>
+                    <div>
+                      <h3 className="font-semibold text-lg">{item.name}</h3>{" "}
+                      {/* Title as semibold heading */}
+                      <p className="text-gray-700 mt-1">
+                        {item.description}
+                      </p>{" "}
+                      {/* Description */}
+                    </div>
                     <Button
                       onClick={() => handleDeleteItem(item._id)}
-                      className="bg-red-500 text-white rounded-lg px-4 py-2 transition duration-200 hover:bg-red-600"
+                      className="mt-4 bg-red-500 text-white rounded-lg px-4 py-2 transition duration-200 hover:bg-red-600 self-end" // Positioning delete button
                       disabled={deletingItems[item._id]}
                     >
                       {deletingItems[item._id] ? "Deleting..." : "Delete"}

@@ -1,55 +1,92 @@
-import React, { useState, useRef } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { showToast } from "@/lib/toast";
+
+// Define the validation schema using Zod
+const ItemSchema = z.object({
+  name: z.string().min(1, {
+    message: "Name is required.",
+  }),
+  description: z.string().min(1, {
+    message: "Description is required.",
+  }),
+});
 
 interface ItemFormProps {
   onAddItem: (name: string, description: string) => Promise<void>;
   isAdding: boolean;
 }
 
-const ItemForm: React.FC<ItemFormProps> = ({ onAddItem, isAdding }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const nameInputRef = useRef<HTMLInputElement>(null);
+export const ItemForm: React.FC<ItemFormProps> = ({ onAddItem, isAdding }) => {
+  const form = useForm<z.infer<typeof ItemSchema>>({
+    resolver: zodResolver(ItemSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await onAddItem(name, description);
-    setName("");
-    setDescription("");
-    nameInputRef.current?.focus();
+  const onSubmit = async (data: z.infer<typeof ItemSchema>) => {
+    try {
+      await onAddItem(data.name, data.description);
+      showToast("Item added successfully!", "success");
+      form.reset(); // Reset the form after successful submission
+    } catch (error) {
+      console.error("Error adding item:", error);
+      showToast("Failed to add item.", "error");
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mb-6 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-2"
-    >
-      <Input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Name"
-        required
-        ref={nameInputRef}
-        className="flex-grow border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <Input
-        type="text"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Description"
-        required
-        className="flex-grow border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <Button
-        type="submit"
-        className="bg-blue-500 text-white rounded-lg px-4 py-2 transition duration-200 hover:bg-blue-600"
-        disabled={isAdding}
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mb-6 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-2"
       >
-        {isAdding ? "Adding..." : "Add Item"}
-      </Button>
-    </form>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter item name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter item description" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" disabled={isAdding}>
+          {isAdding ? "Adding..." : "Add Item"}
+        </Button>
+      </form>
+    </Form>
   );
 };
 
