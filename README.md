@@ -15,6 +15,7 @@ This is a React application designed for managing items, featuring functionaliti
 - API interactions with Axios.
 - Suspense and transition effects for improved UX.
 - TypeScript for type safety across the app.
+- Eslint and Prettier for code quality and consistency.
 
 ## Technologies Used
 
@@ -169,11 +170,3 @@ import { Helmet } from 'react-helmet';
 ## Conclusion
 
 This React Item Management App showcases modern web development practices by integrating various libraries and tools to create a responsive and efficient user experience. With the added benefit of TypeScript, you get better type safety and tooling support throughout the application. Feel free to explore the codebase and contribute!
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
-
-```
