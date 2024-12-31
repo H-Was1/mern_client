@@ -1,9 +1,6 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,7 +12,7 @@ import {
 import { showToast } from "@/lib/toast"; // Ensure you have your toast utility
 import { Textarea } from "./ui/textarea"; // Adjust the import path as necessary
 import { useTransition } from "react";
-import { BASE_URL } from "@/lib/api";
+import { generateOpenAIResponse } from "@/lib/api"; // Import the new function
 
 // Define the validation schema using Zod
 const PromptSchema = z.object({
@@ -42,33 +39,36 @@ export const OpenAIPromptForm: React.FC<OpenAIPromptFormProps> = ({
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = async (data: z.infer<typeof PromptSchema>) => {
-    startTransition(async () => {
-      try {
-        const response = await axios.post(`${BASE_URL}openai/generate`, {
-          prompt: data.prompt,
-        });
+    try {
+      // Start the transition for UI updates
+      startTransition(() => {
+        // Handle the async operation outside of this function
+        handleOpenAIRequest(data.prompt);
+      });
+    } catch (error) {
+      const errorMessage =
+        (error as any).message || "Failed to fetch response from OpenAI.";
+      showToast(errorMessage, "error");
+    }
+  };
 
-        // Assuming the response contains a field called 'response' with the OpenAI output
-        const answer = response?.data?.response as string;
+  const handleOpenAIRequest = async (prompt: string) => {
+    try {
+      const answer = await generateOpenAIResponse(prompt); // Call the new function
 
-        if (!answer) {
-          throw new Error("No response received from OpenAI.");
-        }
-        // Call the parent function to add the new message
-        onAddMessage(data.prompt, answer);
+      // Call the parent function to add the new message
 
-        // Show success notification
-        showToast("Successfully fetched response from OpenAI.", "success");
+      onAddMessage(prompt, answer.response); // Accessing response directly
 
-        form.reset(); // Reset the form after successful submission
-      } catch (error) {
-        showToast(
-          error.response?.data?.message ||
-            "Failed to fetch response from OpenAI.",
-          "error",
-        );
-      }
-    });
+      // Show success notification
+      showToast("Successfully fetched response from OpenAI.", "success");
+
+      form.reset(); // Reset the form after successful submission
+    } catch (error) {
+      const errorMessage =
+        (error as any).message || "Failed to fetch response from OpenAI.";
+      showToast(errorMessage, "error");
+    }
   };
 
   return (

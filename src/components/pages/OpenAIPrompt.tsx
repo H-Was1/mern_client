@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet";
-import OpenAIPromptForm from "./AiForm";
 import { useState } from "react";
+import OpenAIPromptForm from "../AiForm";
 
 const OpenAIPrompt = () => {
   // State to hold chat messages

@@ -1,9 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
 import useItemStore from "@/store/itemStore";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
-import { Input } from "./ui/input";
-import CustomSpinner from "./Loader";
 import { Helmet } from "react-helmet";
 
 import {
@@ -12,6 +8,10 @@ import {
   deleteItem as deleteItemAPI,
 } from "@/lib/api"; // Importing API functions
 import { showToast } from "@/lib/toast"; // Importing showToast function
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import CustomSpinner from "../shared/Loader";
+import { Card } from "../ui/card";
 
 interface fetchProps {
   _id: string;

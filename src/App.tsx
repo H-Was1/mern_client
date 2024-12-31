@@ -1,12 +1,12 @@
 import "./App.css";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./components/HomePage";
-import OpenAIPrompt from "./components/OpenAIPrompt";
-import Navbar from "./components/Navbar";
-import ItemManagement from "./components/ItemsManagement";
 import { Helmet } from "react-helmet";
 import { Toaster } from "./components/ui/sonner";
+import Navbar from "./components/shared/Navbar";
+import HomePage from "./components/pages/HomePage";
+import ItemManagement from "./components/pages/ItemsManagement";
+import OpenAIPrompt from "./components/pages/OpenAIPrompt";
 
 function App() {
   return (
